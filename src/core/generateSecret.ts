@@ -3,9 +3,14 @@ export function generateSecret(
   base: number,
   random: () => number = Math.random,
 ): string {
-  void length;
-  void base;
-  void random;
+  const availableDigits = '0123456789abcdef'.slice(0, base).split('');
 
-  return '';
+  const secret: string[] = [];
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(random() * availableDigits.length);
+    const selectedDigit = availableDigits.splice(randomIndex, 1)[0]!;
+    secret.push(selectedDigit);
+  }
+
+  return secret.join('');
 }
