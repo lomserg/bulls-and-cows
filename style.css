@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 30px 16px;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #f3f5f7;
+  color: #253247;
+}
+
+.game {
+  width: 100%;
+  max-width: 520px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 8%);
+}
+
+h1 {
+  margin-top: 0;
+  text-align: center;
+}
+
+h2 {
+  margin-top: 28px;
+  font-size: 20px;
+}
+
+.settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 28px 0;
+}
+
+label {
+  font-weight: 600;
+}
+
+select,
+input,
+button {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px;
+  font: inherit;
+  border: 1px solid #ccd3dc;
+  border-radius: 6px;
+}
+
+#guess-form {
+  display: grid;
+  gap: 12px;
+}
+
+button {
+  border: none;
+  background: #2563a6;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #194c82;
+}
+
+button:disabled {
+  background: #9aa7b5;
+  cursor: not-allowed;
+}
+
+#message {
+  min-height: 24px;
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+#history {
+  padding-left: 24px;
+}
+
+#history li {
+  margin: 8px 0;
+}
+
+#new-game {
+  margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+  .game {
+    padding: 22px;
+  }
+}

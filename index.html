@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Игра Быки и коровы" />
+    <title>Быки и коровы</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="game">
+      <h1>Быки и коровы</h1>
+      <p>Угадайте загаданное компьютером число.</p>
+
+      <section class="settings">
+        <label for="length">Длина числа</label>
+        <select id="length">
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+
+        <label for="base">Система счисления</label>
+        <select id="base">
+          <option value="10">10</option>
+          <option value="16">16</option>
+        </select>
+      </section>
+
+      <form id="guess-form">
+        <label for="guess">Ваш вариант</label>
+        <input id="guess" type="text" autocomplete="off" />
+        <button type="submit">Проверить</button>
+      </form>
+
+      <p id="message" aria-live="polite"></p>
+
+      <section>
+        <h2>История попыток</h2>
+        <ol id="history"></ol>
+      </section>
+
+      <button id="new-game" type="button">Новая игра</button>
+    </main>
+
+    <script type="module" src="./dist/index.js"></script>
+  </body>
+</html>
