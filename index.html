@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Игра Быки и коровы" />
+    <title>Быки и коровы</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="game">
+      <h1>Быки и коровы</h1>
+      <p>Угадайте загаданное компьютером число.</p>
+
+      <section class="settings">
+        <label for="length">Длина числа</label>
+        <select id="length">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4" selected>4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+
+        <label for="base">Система счисления</label>
+        <select id="base">
+          <option value="2">Двоичная (2)</option>
+          <option value="8">Восьмеричная (8)</option>
+          <option value="10" selected>Десятичная (10)</option>
+          <option value="16">Шестнадцатеричная (16)</option>
+        </select>
+      </section>
+      <button id="start-game" type="button">Начать игру</button>
+      <form id="guess-form" hidden>
+        <label for="guess">Ваш вариант</label>
+        <input id="guess" type="text" autocomplete="off" />
+        <button type="submit">Проверить</button>
+      </form>
+
+      <p id="message" aria-live="polite"></p>
+
+      <section id="history-section" hidden>
+        <h2>История попыток</h2>
+        <ol id="history"></ol>
+      </section>
+      <section id="records-section">
+        <h2>Таблица рекордов</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Попыток</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody id="records-body"></tbody>
+        </table>
+      </section>
+      <button id="new-game" type="button" hidden>Новая игра</button>
+    </main>
+
+    <script type="module" src="./dist/index.js"></script>
+  </body>
+</html>
