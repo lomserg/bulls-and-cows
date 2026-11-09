@@ -3,6 +3,7 @@ import { evaluateGuess } from './core/evaluateGuess.js';
 import { isValidGuess } from './core/isValidGuess.js';
 import { createDigitValidator } from './core/createDigitValidator.js';
 import { countPossibleSecrets } from './core/countPossibleSecrets.js';
+import { addRecord, getTopRecords, loadRecords } from './core/leaderboard.js';
 
 const lengthSelect = document.querySelector<HTMLSelectElement>('#length');
 const baseSelect = document.querySelector<HTMLSelectElement>('#base');
@@ -11,6 +12,9 @@ const guessForm = document.querySelector<HTMLFormElement>('#guess-form');
 const message = document.querySelector<HTMLParagraphElement>('#message');
 const history = document.querySelector<HTMLOListElement>('#history');
 const newGameButton = document.querySelector<HTMLButtonElement>('#new-game');
+const recordsBody = document.querySelector<HTMLTableSectionElement>('#records-body');
+const startGameButton = document.querySelector<HTMLButtonElement>('#start-game');
+const historySection = document.querySelector<HTMLElement>('#history-section');
 if (
   !lengthSelect ||
   !baseSelect ||
@@ -18,10 +22,26 @@ if (
   !guessForm ||
   !message ||
   !history ||
-  !newGameButton
+  !newGameButton ||
+  !startGameButton ||
+  !historySection ||
+  !recordsBody
 ) {
+  console.table({
+    lengthSelect: lengthSelect !== null,
+    baseSelect: baseSelect !== null,
+    guessInput: guessInput !== null,
+    guessForm: guessForm !== null,
+    message: message !== null,
+    history: history !== null,
+    newGameButton: newGameButton !== null,
+    recordsBody: recordsBody !== null,
+    startGameButton: startGameButton !== null,
+    historySection: historySection !== null,
+  });
   throw new Error('Game elements not found');
 }
+
 const elements = {
   lengthSelect,
   baseSelect,
@@ -30,6 +50,9 @@ const elements = {
   message,
   history,
   newGameButton,
+  recordsBody,
+  startGameButton,
+  historySection,
 };
 let secret = '';
 let attempts = 0;
@@ -49,12 +72,83 @@ function startGame(): void {
   elements.guessInput.disabled = false;
 
   elements.message.textContent = `Новая игра! Возможных комбинаций: ${countPossibleSecrets(currentLength, currentBase)}`;
-}
-elements.newGameButton.addEventListener('click', startGame);
-elements.lengthSelect.addEventListener('change', startGame);
-elements.baseSelect.addEventListener('change', startGame);
+  elements.lengthSelect.disabled = true;
+  elements.baseSelect.disabled = true;
 
-startGame();
+  elements.startGameButton.hidden = true;
+  elements.guessForm.hidden = false;
+  elements.historySection.hidden = false;
+  elements.newGameButton.hidden = false;
+}
+
+function returnToSetup(): void {
+  secret = '';
+  attempts = 0;
+  isGameOver = false;
+
+  elements.lengthSelect.disabled = false;
+  elements.baseSelect.disabled = false;
+
+  elements.guessForm.hidden = true;
+  elements.historySection.hidden = true;
+  elements.newGameButton.hidden = true;
+  elements.startGameButton.hidden = false;
+
+  elements.guessInput.value = '';
+  elements.history.replaceChildren();
+
+  elements.message.textContent = 'Выберите настройки и начните игру.';
+}
+
+function updateLengthOptions(): void {
+  const isBinary = Number(elements.baseSelect.value) === 2;
+
+  Array.from(elements.lengthSelect.options).forEach((option) => {
+    option.disabled = isBinary && Number(option.value) !== 2;
+  });
+
+  if (isBinary) {
+    elements.lengthSelect.value = '2';
+  }
+
+  currentLength = Number(elements.lengthSelect.value);
+  currentBase = Number(elements.baseSelect.value);
+
+  renderRecords();
+}
+elements.startGameButton.addEventListener('click', startGame);
+
+elements.newGameButton.addEventListener('click', returnToSetup);
+
+elements.lengthSelect.addEventListener('change', updateLengthOptions);
+
+elements.baseSelect.addEventListener('change', updateLengthOptions);
+
+updateLengthOptions();
+function renderRecords(): void {
+  const top = getTopRecords(loadRecords(), currentLength, currentBase);
+
+  elements.recordsBody.replaceChildren(
+    ...top.map((record, index) => {
+      const row = document.createElement('tr');
+
+      const cells = [
+        String(index + 1),
+        String(record.attempts),
+        new Date(record.date).toLocaleDateString('ru-RU'),
+      ];
+
+      cells.forEach((text) => {
+        const cell = document.createElement('td');
+        cell.textContent = text;
+        row.append(cell);
+      });
+
+      return row;
+    }),
+  );
+}
+renderRecords();
 elements.guessInput.addEventListener('input', () => {
   const isValidDigit = createDigitValidator(currentBase);
 
@@ -93,6 +187,16 @@ elements.guessForm.addEventListener('submit', (event) => {
 
   if (result.bulls === currentLength) {
     isGameOver = true;
+
+    addRecord({
+      attempts,
+      length: currentLength,
+      base: currentBase,
+      date: new Date().toISOString(),
+    });
+
+    renderRecords();
+
     elements.message.textContent = `Победа! Вы угадали за ${attempts} попыток.`;
     elements.guessInput.disabled = true;
   } else {
